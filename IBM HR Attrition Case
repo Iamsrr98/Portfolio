@@ -1,0 +1,113 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('D:\Data science\ibm.csv')
+
+print(df.head())
+print(df.isna().sum())
+
+df["Attrition"]
+
+#Exploratory Data Analysis
+
+m = df['MaritalStatus']
+a = df['Attrition']
+
+plt.figure(figsize=(8,8))
+pie = df.groupby('Attrition')['Attrition'].count()
+plt.pie(pie, explode=[0.1, 0.1], labels=['No', 'Yes'], autopct='%1.1f%%');
+
+#Histogram
+
+sns.distplot(employee_data["Age"])
+
+A = df["Age"]
+# The majority of employees are in their 30s, with the largest percentage being 35 years old, and the lowest being those who are less than 20 or around the age of 60.
+
+# Using heatmap to check correlation between the variables
+
+employee_data = df.drop(['EmployeeCount','StandardHours'], axis=1) # dropping these two columns because they only have one value
+corr = df.corr()
+plt.figure(figsize=(12,12))
+sns.heatmap(corr,cbar=True,square=True,fmt='.1f',annot=True,cmap='Reds')
+sns.distplot(df["Age"])
+
+#label encoding
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+df['Gender'] = le.fit_transform(df['Gender'])
+df['MaritalStatus'] = le.fit_transform(df['MaritalStatus'])
+df['OverTime'] = le.fit_transform(df['OverTime'])
+df['Attrition'] = le.fit_transform(df['Attrition'])
+
+
+#one hot encoding
+oh = pd.get_dummies(df['BusinessTravel'])
+df = pd.concat([df, oh],axis = 1)
+df.drop('BusinessTravel',axis = 1, inplace = True)
+
+
+oh = pd.get_dummies(df['Department'])
+df = pd.concat([df, oh],axis = 1)
+df.drop('Department',axis = 1, inplace = True)
+
+
+oh = pd.get_dummies(df['EducationField'])
+df = pd.concat([df, oh],axis = 1)
+df.drop('EducationField',axis = 1, inplace = True)
+
+oh = pd.get_dummies(df['JobRole'])
+df = pd.concat([df, oh],axis = 1)
+df.drop('JobRole',axis = 1, inplace = True)
+
+oh = pd.get_dummies(df['MaritalStatus'])
+df = pd.concat([df, oh],axis = 1)
+df.drop('MaritalStatus',axis = 1, inplace = True)
+
+
+#Dropping the column "Over 18", as all the employees are above 18 years by default.
+print(df['Over18'].value_counts())
+df=df.drop('Over18',axis=1)
+
+
+#creation of y
+X = df.drop('Attrition',axis=1)
+y = df['Attrition']
+
+from sklearn.preprocessing import MinMaxScaler
+s = MinMaxScaler()
+X = s.fit_transform(X)
+
+
+
+#test train split
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.2,random_state = 42)
+
+print(X_train.shape)
+print(y_train.shape)
+print(X_test.shape)
+print(y_test.shape)
+
+#linear reg
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+
+lr.fit(X_train,y_train)
+
+pred=lr.predict(X_test)
+
+
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+mse=mean_squared_error(y_test,pred)
+
+r2=r2_score(y_test,pred)
+
+mae=mean_absolute_error(y_test,pred)
+
+print(mse, r2 , mae)
+
+
+pd.DataFrame(pred).to_csv("D:\pred.csv")
