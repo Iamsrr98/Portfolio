@@ -32,7 +32,8 @@ employee_data = df.drop(['EmployeeCount','StandardHours'], axis=1) # dropping th
 corr = df.corr()
 plt.figure(figsize=(12,12))
 sns.heatmap(corr,cbar=True,square=True,fmt='.1f',annot=True,cmap='Reds')
-sns.distplot(df["Age"])
+
+# Many employees stay in their existing positions and work for the same management for years, which means they aren't promoted, which may be a significant contributor in attrition.
 
 #label encoding
 from sklearn.preprocessing import LabelEncoder
@@ -108,6 +109,5 @@ r2=r2_score(y_test,pred)
 mae=mean_absolute_error(y_test,pred)
 
 print(mse, r2 , mae)
-
 
 pd.DataFrame(pred).to_csv("D:\pred.csv")
